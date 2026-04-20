@@ -23,11 +23,19 @@ echo "Adding user '$USERNAME'..."
 sudo useradd -m -s "$DEFAULT_SHELL" "$USERNAME"
 sudo chown -R "$USERNAME:$USERNAME" "/home/$USERNAME" # make them own their home dir
 
-# If user should be sudoer, add them to the sudo group
+# If user should be sudoer, add them to the sudo group and set a temporary password
 if [ "$SUDOER" = "true" ]; then
 	echo "Since --sudoer is set, giving '$USERNAME' sudo permissions..."
 	sudo usermod -aG "$SUDO_GROUP" "$USERNAME"
-	echo "The administrator has granted you sudo privileges on this system. Run 'passwd' (no args) to set your password." | sudo tee "/home/$USERNAME/README_SUDO.txt" > /dev/null
+
+	echo "Enter a temporary password for '$USERNAME':"
+	read -rs TEMP_PASS
+	echo "$USERNAME:$TEMP_PASS" | sudo chpasswd
+	sudo passwd -e "$USERNAME"
+	echo "Temporary password set and marked as expired; '$USERNAME' will be prompted to change it on first login."
+
+	printf "The administrator has granted you sudo privileges on this system.\nYour temporary password is: %s\nYou will be required to change it on first login." \
+		"$TEMP_PASS" | sudo tee "/home/$USERNAME/README_SUDO.txt" > /dev/null
 fi
 
 # Create their .ssh folder with authorized_keys and config, and give them ownership
