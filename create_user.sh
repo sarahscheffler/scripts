@@ -43,7 +43,7 @@ echo "Creating .ssh, authorized_keys, and config for '$USERNAME'..."
 sudo mkdir -p "/home/$USERNAME/.ssh"
 sudo touch "/home/$USERNAME/.ssh/authorized_keys"
 sudo touch "/home/$USERNAME/.ssh/config"
-#sudo chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/.ssh" # this should be handled recursively but leaving it here until confirmed
+sudo chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/.ssh" # not sure why this is not getting handled recursively, but 
 sudo chmod 700 "/home/$USERNAME/.ssh"
 sudo chmod 600 "/home/$USERNAME/.ssh/authorized_keys"
 sudo chmod 600 "/home/$USERNAME/.ssh/config"
